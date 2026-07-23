@@ -11,6 +11,31 @@ const budget = $("#numBudget").val();
     // Create the object
     const taskToSave = new Task(title, desc, color, date, status, budget);
     console.log(taskToSave);
+
+    //mock the response from the server
+    displayTask(taskToSave);
+
+    // Send to Server
+    $.ajax({
+        type:"POST", // HTTP verb: Create
+        url: API,
+        data: JSON.stringify(taskToSave),
+        contentType:"application/json",
+        success:function(create){
+            console.log(created);
+        },
+        error: function(err){
+            console.log(err);
+        }
+    })
+
+    // Clear the form for the next task
+    $("#txtTitle").val("");
+    $("#txtDescription").val("");
+    $("#selColor").val("#ffcc00");
+    $("#selDate").val("");
+    $("#selStatus").val("New");
+    $("#numBudget").val("");
 }
 
 const API = "https://106api-b0bnggbsgnezbzcz.westus3-01.azurewebsites.net/api/tasks";
@@ -20,12 +45,14 @@ function loadTask(){
         type:"get", //HTTP Verb. READ
         url: API,
         success: function(data){
-            console.log(data)
+            console.log(data);
+            for(let i = 0; i < data.length; i++){
+                displayTask(data[i]);
+            }
         },
         error:function(err){
             console.log(err);
         }
-        
     })
 }
 
@@ -50,6 +77,7 @@ $(".list").append(syntax);
 function init(){
     // console.log("Hello from 106");
     $("#btnSave").click(saveTask);
+    loadTask();
 }
 
 function second(){
