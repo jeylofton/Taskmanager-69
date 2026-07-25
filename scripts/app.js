@@ -13,7 +13,7 @@ const budget = $("#numBudget").val();
     console.log(taskToSave);
 
     //mock the response from the server
-    displayTask(taskToSave);
+    // displayTask(taskToSave);
 
     // Send to Server
     $.ajax({
@@ -38,6 +38,24 @@ const budget = $("#numBudget").val();
     $("#numBudget").val("");
 }
 
+function updateTask(){
+    $.ajax({
+        type:"PUT",
+        url: "https://106api-b0bnggbsgnezbzcz.westus3-01.azurewebsites.net/api/tasks/3",
+        data: JSON.stringify({
+            type: "Hello this is an update Jey",
+            budget: 9999
+        }),
+        contentType:"applicaiton/json",
+        success: function(respsonse){
+            console.log(response);
+        },
+        error: function(err){
+            console.log(err)
+        }
+    })
+}
+
 const API = "https://106api-b0bnggbsgnezbzcz.westus3-01.azurewebsites.net/api/tasks";
 
 function loadTask(){
@@ -46,6 +64,7 @@ function loadTask(){
         url: API,
         success: function(data){
             console.log(data);
+            $(".list").empty();
             for(let i = 0; i < data.length; i++){
                 displayTask(data[i]);
             }
