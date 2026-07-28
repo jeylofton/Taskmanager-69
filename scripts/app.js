@@ -123,6 +123,18 @@ function deleteTask(){
     });
 }
 
+function filterTask(status){
+    $(".task").each(function(){
+        let taskStatus = $(this).find(".status").text().trim();
+
+        if(status === "All" || taskStatus === status){
+            $(this).show();
+        }else{
+            $(this).hide();
+        }
+    });
+}
+
 function displayTask(task){
     let syntax =  `
     <div id="${task.id}" data-user-id="${task.userId}" class="task" style="border-color:${task.color}">
@@ -148,6 +160,10 @@ function init(){
     $("#btnSave").click(saveTask);
     $(".list").on("click", ".btn-edit", updateTask);
     $(".list").on("click",".btn-delete",deleteTask);
+    $("#btnAll").click(function(){ filterTask("All"); });
+    $("#btnNew").click(function(){ filterTask("New"); });
+    $("#btnInProgress").click(function(){ filterTask("In Progress"); });
+    $("#btnCompleted").click(function(){ filterTask("Completed"); });
     loadTask();
 }
 

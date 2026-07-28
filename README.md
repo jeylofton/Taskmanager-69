@@ -10,6 +10,7 @@ Each task can include a title, description, color, due date, status, and budget.
 - Assign a title, description, color, date, status, and budget
 - Load tasks from an API
 - Filter tasks by user ID
+- Filter displayed tasks by status
 - Edit a task's title and budget
 - Delete a task
 - Use the selected color as the task's left border
@@ -104,6 +105,10 @@ This function creates the HTML for one task and appends it to the task list. It 
 - `data-user-id` stores the ID of the user who owns the task.
 
 The function also places `task.color` in the inline `border-color` style. The `.task` CSS rule creates a solid left border, which makes the chosen color visible.
+
+### `filterTask(status)`
+
+This function checks the status shown inside every task card. It displays all cards when **All** is selected; otherwise, it only displays cards whose status matches **New**, **In Progress**, or **Completed**. The filter works on the current user's tasks that were already loaded onto the page.
 
 ### `updateTask()`
 
