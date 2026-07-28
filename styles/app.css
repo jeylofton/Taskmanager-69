@@ -23,6 +23,14 @@ gap: 15px;
 margin-bottom: 20px;
 }
 
+.task {
+  border-left: 8px solid;
+  padding: 15px;
+  margin-bottom: 15px;
+  background-color: white;
+  border-radius: 6px;
+}
+
 input, select, button {
 padding: 10px;
 border: 1px solid #ccc;
