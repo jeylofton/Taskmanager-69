@@ -21,8 +21,9 @@ const budget = $("#numBudget").val();
         url: API,
         data: JSON.stringify(taskToSave),
         contentType:"application/json",
-        success:function(create){
+        success:function(created){
             console.log(created);
+            loadTask();
         },
         error: function(err){
             console.log(err);
@@ -75,9 +76,34 @@ function loadTask(){
     })
 }
 
+function deleteTask(){
+    //1. Context: this is the specific button that was clicked
+    let btn = $(this);
+
+    //2. Find the parent div with the class task
+    let taskElement = btn.parents(".task");
+
+    //3. Get the ID that we save in to the HTML
+    let id= taskElement.attr("id");
+
+    console.log("requesting id is", id);
+
+    // Send the task ID to the server and remove the card after deletion.
+    $.ajax({
+        type: "DELETE",
+        url: `${API}/${id}`,
+        success: function(){
+            taskElement.remove();
+        },
+        error: function(err){
+            console.log(err);
+        }
+    });
+}
+
 function displayTask(task){
     let syntax =  `
-    <div class="task" style="border-color:${task.color}">
+    <div id="${task.id}" class="task" style="border-color:${task.color}">
     <div class="info">
         <h4>${task.title}</h4>
         <p>${task.desc}</p>
@@ -87,6 +113,7 @@ function displayTask(task){
         <label>Due: ${task.date}</label>
         <label>Budget: $${task.budget}</label>
     </div>
+    <button class="btn-delete"> Delete </button>
     </div>`;
     
   // Inject the new HTML into the DOM Tree
@@ -96,6 +123,7 @@ $(".list").append(syntax);
 function init(){
     // console.log("Hello from 106");
     $("#btnSave").click(saveTask);
+    $(".list").on("click",".btn-delete",deleteTask);
     loadTask();
 }
 
