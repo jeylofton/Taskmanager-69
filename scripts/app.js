@@ -1,3 +1,5 @@
+const currentUserId = 1;
+
 function saveTask(){
 
 const title = $("#txtTitle").val();
@@ -9,7 +11,7 @@ const budget = $("#numBudget").val();
 
 
     // Create the object
-    const taskToSave = new Task(title, desc, color, date, status, budget);
+    const taskToSave = new Task(title, desc, color, date, status, budget, currentUserId);
     console.log(taskToSave);
 
     //mock the response from the server
@@ -40,21 +42,38 @@ const budget = $("#numBudget").val();
 }
 
 function updateTask(){
+    // Get the task that belongs to the Edit button that was clicked.
+    let btn = $(this);
+    let taskElement = btn.parents(".task");
+    let id = taskElement.attr("id");
+
+    // Ask the user for the two values required by the challenge.
+    let newTitle = prompt("Enter new title:");
+    let newBudget = prompt("Enter new budget:");
+
+    // Stop if either prompt was cancelled or left empty.
+    if (newTitle === null || newBudget === null ||
+        newTitle.trim() === "" || newBudget.trim() === "") {
+        return;
+    }
+
     $.ajax({
         type:"PUT",
-        url: "https://106api-b0bnggbsgnezbzcz.westus3-01.azurewebsites.net/api/tasks/3",
+        url: `${API}/${id}`,
         data: JSON.stringify({
-            type: "Hello this is an update Jey",
-            budget: 9999
+            title: newTitle,
+            budget: newBudget
         }),
-        contentType:"applicaiton/json",
-        success: function(respsonse){
+        contentType:"application/json",
+        success: function(response){
             console.log(response);
+            loadTask();
         },
         error: function(err){
-            console.log(err)
+            console.log(err);
+            alert("Error updating task");
         }
-    })
+    });
 }
 
 const API = "https://106api-b0bnggbsgnezbzcz.westus3-01.azurewebsites.net/api/tasks";
@@ -67,7 +86,10 @@ function loadTask(){
             console.log(data);
             $(".list").empty();
             for(let i = 0; i < data.length; i++){
-                displayTask(data[i]);
+                // Only display tasks that belong to the current user.
+                if (Number(data[i].userId) === currentUserId) {
+                    displayTask(data[i]);
+                }
             }
         },
         error:function(err){
@@ -103,7 +125,7 @@ function deleteTask(){
 
 function displayTask(task){
     let syntax =  `
-    <div id="${task.id}" class="task" style="border-color:${task.color}">
+    <div id="${task.id}" data-user-id="${task.userId}" class="task" style="border-color:${task.color}">
     <div class="info">
         <h4>${task.title}</h4>
         <p>${task.desc}</p>
@@ -113,6 +135,7 @@ function displayTask(task){
         <label>Due: ${task.date}</label>
         <label>Budget: $${task.budget}</label>
     </div>
+    <button class="btn-edit"> Edit </button>
     <button class="btn-delete"> Delete </button>
     </div>`;
     
@@ -123,6 +146,7 @@ $(".list").append(syntax);
 function init(){
     // console.log("Hello from 106");
     $("#btnSave").click(saveTask);
+    $(".list").on("click", ".btn-edit", updateTask);
     $(".list").on("click",".btn-delete",deleteTask);
     loadTask();
 }
